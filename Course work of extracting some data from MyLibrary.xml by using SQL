@@ -42,7 +42,7 @@ stuff = ET.parse(fname)
 def lookup(d,key):                                # d is the outer mother tag called 'dict' in this Library.xml file
 	Found=False
 	for child in d:                                 # using for loop to locate every child tag 
-		if Found ==True : Return child.text
+		if Found:True : Return child.text
 		if child.tag =='key' and key == child.text:   # filtering the information which we want to extract.
 			Found = True
 	return None

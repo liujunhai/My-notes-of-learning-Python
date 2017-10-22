@@ -1,0 +1,94 @@
+import sqlite3
+import xml.etree.ElementTree as ET
+
+conn=sqlite.connect('trackdb.sqlite')
+cur.conn.cursor()
+
+# make some fresh tables using cur.executescript
+cur.executescript('''
+DROP TABLE IF EXISTS Artist;
+DROP TABLE IF EXISTS Album;
+DROP TABLE IF EXISTS Genre;
+DROP TABLE IF EXISTS Track;
+
+CREATE TABLE Artist(
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	name TEXT UNIQUE
+);
+	
+CREATE TABLE Album(
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,   # PRIMARY KEY
+	title TEXT UNIQUE,
+	Artist_id INTEGER   # FOREIGN KEY
+);
+
+CREATE TABLE Genre(
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	style TEXT UNIQUE,
+);
+
+CREATE TABLE Track(
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	title TEXT UNIQUE,
+	Genre_id INTEGER,
+	Album_id INTEGER
+	Rating INTEGER, Length INTEGER, Count INTEGER
+);
+''')
+
+fname=input('Please Enter A File----')
+stuff = ET.parse(fname)
+
+def lookup(d,key):                                # d is the outer mother tag called 'dict' in this Library.xml file
+	Found=False
+	for child in d:                                 # using for loop to locate every child tag 
+		if Found ==True : Return child.text
+		if child.tag =='key' and key == child.text:   # filtering the information which we want to extract.
+			Found = True
+	return None
+all = stuff.findall('dict/dict/dict')
+print('Dict Count:',len(all))
+
+for entry in all:
+	if lookup(entry,'Track ID') is None : continue
+	name=lookup(entry,'Name')
+	artist=lookup(entry,'Artist')
+	album=lookup(entry,'Album')
+	genre=lookup(entry,'Genre')
+	rating=lookup(entry,'Bit Rate')
+	count=lookup(entry,'Play Count')
+	length=lookup(entry,'Total Time')
+
+	if name is None or artist is None or album is None or genre is None:continue
+	print(name,artist,album,genre)
+
+cur.execute('INSERT OR IGNORE INTO Artist(name) VALUES(?)',(artist,))   # TABLE Artist; artist in for loop 
+cur.execute('SELECT id FROM Artist WHERE name=?',(artist,))
+artist_id = cur.fetchone()[0]
+
+cur.execute('INSERT OR IGNORE INTO Album(title,Artist_id) VALUES(?,?)',(album,artist_id))
+cur.execute('SELECT id FROM Album WHERE title=?',(album,))
+album_id = cur.fetchone()[0]
+
+cur.execute('INSERT OR IGNORE INTO Genre(style) VALUES(?)',(genre,))
+cur.execute('SELECT id FROM Genre WHERE style=?',(genre,))
+genre_id = cur.fetchone()[0]
+
+cur.execute('INSERT OR IGNORE INTO Track(title,Genre_id,Album_id,Rating,Length,Count)
+	VALUES(?,?,?,?,?,?)',(name,genre_id,album_id,rating,count,length))
+	
+	conn.commit()
+
+
+
+
+
+
+
+	
+
+	
+
+
+		
+	

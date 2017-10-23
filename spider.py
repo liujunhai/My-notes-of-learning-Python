@@ -125,7 +125,7 @@ while True:
 		# Check if the URL is in any of the webs
         found = False
         for web in webs:
-            if ( href.startswith(web) ) :
+            if ( href.startswith(web) ) :    # check if the url is startswith the web( have some relationships with that web url we inputed)
                 found = True
                 break
         if not found : continue

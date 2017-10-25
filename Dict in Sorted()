@@ -1,0 +1,13 @@
+When sorting a dictionary depending on its value
+
+Right: 
+>>> d={'lilee':25,'wangyan':21,'liqun':32,'lidaming':19}
+>>> sorted(d,key=d.get,reverse=True)
+['liqun', 'lilee', 'wangyan', 'lidaming']
+
+Wrong:
+>>> sorted(d,key=d.values(),reverse=True)
+Traceback (most recent call last):
+  File "<pyshell#35>", line 1, in <module>
+    sorted(d,key=d.values(),reverse=True)
+TypeError: 'dict_values' object is not callable
